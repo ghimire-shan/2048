@@ -1,0 +1,62 @@
+body{
+    background-color: #E3F9FF;
+    text-align: center;
+}
+hr{
+    width: 450px;
+}
+h1, h4{
+    color: #AA8562;
+}
+#board{
+    background-color: #132C33;
+    height: 400px;
+    width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    border: 6px solid #0a181b;
+}
+
+.tile{
+    width: 90px;
+    height: 90px;
+    border: 5px solid #f1f1f1;
+
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* To add differnt colors to the different numbers in the tiles */
+
+.t2{
+    background-color: #629AAA;
+    color: #727371
+}
+.t4{
+    background-color: #037392;
+    color: #727371
+}
+.t8{
+    background-color: #0401aa;
+    color: white;
+}
+.t16{
+    background-color: #1d0052;
+    color: white;
+}
+.t32{
+    background-color: #d35151;
+    color: #727371
+}
+.t64{
+    background-color: #7400a1;
+    color: #727371
+}
+
+
+
+
+
