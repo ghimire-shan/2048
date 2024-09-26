@@ -9,7 +9,7 @@ window.onload = function(){
 }
 
 function setBoardForGame(){
-    board = new Array(4).fill().map( ()=> new Array(4).fill(2));
+    board = new Array(4).fill().map( ()=> new Array(4).fill(0));
 
     for (let row = 0; row < this.rows; row ++){
         for (let column =0; column < this.columns; column++){
@@ -27,15 +27,13 @@ function setBoardForGame(){
 function setTile(){
     if (!hasEmptyTile){  
         return;  
-        // if (gameOver){
-        //     alert("Game over");
-        // }else{
-        //    return; 
-        // }
+        if (gameOver){
+            alert("Game over");
+        }else{
+           return; 
+        }
     }
-
-    
-    
+   
     let found = false;
 
     while (!found){
