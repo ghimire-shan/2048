@@ -3,14 +3,12 @@ var score =0;
 var rows = 4;
 var columns = 4;
 
-
 window.onload = function(){
     setBoardForGame();
 }
 
 function setBoardForGame(){
     board = new Array(rows).fill().map( ()=> new Array(columns).fill(0));
-
     for (let row = 0; row < rows; row ++){
         for (let column =0; column < columns; column++){
             let tile = document.createElement("div");
@@ -28,9 +26,7 @@ function setTile(){
     if (!hasEmptyTile()){ 
         return;
     }
-
     let found = false;
-
     while (!found){
         let row = Math.floor(Math.random() * rows);
         let column = Math.floor(Math.random() * columns);
@@ -59,8 +55,6 @@ function gameOver(){
     return true;
 }
 
-
-
 function updateTile(tile, number){
     // Remove the innerText
     tile.innerText = "";
@@ -77,7 +71,6 @@ function updateTile(tile, number){
 
 document.addEventListener('keydown', (e) => {
     let boardChanged = false;
-
     switch (e.code) {
         case 'ArrowLeft':
             boardChanged = slideLeft();
@@ -92,34 +85,29 @@ document.addEventListener('keydown', (e) => {
             boardChanged = slideDown();
             break;
     }
-
     // Only add a new tile if the board has changed
     if (boardChanged) {
         setTile();
-        
-        // Check for game over state after a successful move
+        // Check for game over after all successful move.
         if (gameOver()) {
             alert("Game Over! No valid moves left");
         }
     }
-
     // Update the score display
     document.getElementById("score").innerText = score;
 });
+
 function removeZeroes(row){
     return row.filter(num => num !=0);
 }
-
 
 function slide(row){
     if (!row){
         return null;
     }
-
     let originalRow = [...row];
     row = removeZeroes(row);
     // When all zeroes removed, actually side
-
     for (let index = 0; index < row.length -1 ;index++ ){
         if (row[index] == row[index+1]){
             row[index] *= 2;
@@ -139,13 +127,11 @@ function slideLeft(){
     for (let r = 0; r < rows; r++){
         let row = board[r];
         let newRow = slide(row);
-
         // If the value is null, then the board has not changed. 
         if (newRow){
           board[r] = newRow;
           boardChanged = true; 
         }   
-
         for (let c= 0; c < columns; c++){
             let tile = document.getElementById(r.toString()+c.toString());
             let num = board[r][c]
@@ -160,7 +146,7 @@ function slideRight(){
     let boardChanged = false;
     for (let r = 0; r < rows; r++){
         let row = board[r];
-        // Sliding to the right is like sliding to the left of right
+        // Sliding to the right is like sliding to the reverse of left.
         row.reverse();
         let newRow = slide(row);
         
@@ -178,12 +164,11 @@ function slideRight(){
         }
     }
     return boardChanged;
-    
 }
 
 function slideUp(){
     let boardChanged = false;
-    // Sliding left but taking the ith index, 
+    // Sliding left but taking the ith index. 
     for (let c=0; c < columns; c++){
         let row = [board[0][c], board[1][c], board[2][c], board[3][c]];
         let newRow  = slide(row);
@@ -203,7 +188,7 @@ function slideUp(){
 
 function slideDown(){
     let boardChanged = false;
-    // Sliding down is basically sliding up by reverse
+    // Sliding down is basically sliding up but reverse
     for (let c=0; c < columns; c++){
         let row = [board[0][c], board[1][c], board[2][c], board[3][c]];
         row.reverse()
@@ -224,6 +209,7 @@ function slideDown(){
     }
     return boardChanged;
 }
+
 function hasEmptyTile() {
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
