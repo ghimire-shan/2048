@@ -21,7 +21,7 @@ h1, h4{
 .tile{
     width: 90px;
     height: 90px;
-    border: 5px solid #f1f1f1;
+    border: 5px solid #528b92;
 
     font-size: 40px;
     display: flex;
@@ -32,29 +32,42 @@ h1, h4{
 /* To add differnt colors to the different numbers in the tiles */
 
 .t2{
-    background-color: #629AAA;
-    color: #727371
+    background-color: #005d77;
+    color: #ffffff
 }
 .t4{
     background-color: #037392;
-    color: #727371
+    color: #94c901
 }
 .t8{
-    background-color: #0401aa;
-    color: white;
+    background-color: #077e64;
+    color: rgb(218, 238, 37);
 }
 .t16{
     background-color: #1d0052;
-    color: white;
+    color: rgb(243, 0, 231);
 }
 .t32{
-    background-color: #d35151;
-    color: #727371
+    background-color: #bb0c0c;
+    color: #cfcc14
 }
 .t64{
     background-color: #7400a1;
-    color: #727371
+    color: #89ac0b
 }
+.t128{
+    background-color: #171263;
+    color: #12aa44
+}
+.t256{
+    background-color: #a7126e;
+    color: #aaa681
+}
+.t2048{
+    background-color: pink;
+    color:rgb(243, 0, 231);
+}
+
 
 
 

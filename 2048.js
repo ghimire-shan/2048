@@ -9,10 +9,10 @@ window.onload = function(){
 }
 
 function setBoardForGame(){
-    board = new Array(4).fill().map( ()=> new Array(4).fill(0));
+    board = new Array(rows).fill().map( ()=> new Array(columns).fill(0));
 
-    for (let row = 0; row < this.rows; row ++){
-        for (let column =0; column < this.columns; column++){
+    for (let row = 0; row < rows; row ++){
+        for (let column =0; column < columns; column++){
             let tile = document.createElement("div");
             tile.id = row.toString() + column.toString();
             let number = board[row][column];
@@ -25,20 +25,15 @@ function setBoardForGame(){
 }
 
 function setTile(){
-    if (!hasEmptyTile){  
-        return;  
-        if (gameOver){
-            alert("Game over");
-        }else{
-           return; 
-        }
+    if (!hasEmptyTile()){ 
+        return;
     }
-   
+
     let found = false;
 
     while (!found){
-        let row = Math.floor(Math.random() * this.rows);
-        let column = Math.floor(Math.random() * this.columns);
+        let row = Math.floor(Math.random() * rows);
+        let column = Math.floor(Math.random() * columns);
         if (board[row][column] ==  0){
             board[row][column] =2;
             let tile = document.getElementById(row.toString() + column.toString());
@@ -50,14 +45,13 @@ function setTile(){
 }
 
 function gameOver(){
-    for (let r = 0; r < this.rows; r++) {
-        for (let c = 0; c < this.columns; c++) {
-            // Check if any horizontal move is possible
-            if (c < this.columns - 1 && board[r][c] === board[r][c + 1]) {
-                return false
-            }
-            // Check if any vertical move is possible
-            if (r < this.rows - 1 && board[r][c] === board[r + 1][c]) {
+    if (hasEmptyTile()){
+        return false;
+    }
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < columns; c++) {
+            // Check if any horizontal or vertical moves are possible.
+            if ((c < columns - 1 && board[r][c] === board[r][c + 1])|| (r < rows - 1 && board[r][c] === board[r + 1][c])){
                 return false;
             }
         }
@@ -81,33 +75,48 @@ function updateTile(tile, number){
     }
 }
 
-document.addEventListener('keyup', (e) => {
-    if (e.code == "ArrowLeft"){
-        slideLeft();
-        setTile();
-    }
-    else if (e.code == "ArrowRight"){
-        slideRight();
-        setTile();
-    }
-    else if (e.code == "ArrowUp"){
-        slideUp();
-        setTile();
-    }
-    else if (e.code == "ArrowDown"){
-        slideDown();
-        setTile();
-    }
-    document.getElementById("score").innerText = this.score;
-})
+document.addEventListener('keydown', (e) => {
+    let boardChanged = false;
 
+    switch (e.code) {
+        case 'ArrowLeft':
+            boardChanged = slideLeft();
+            break;
+        case 'ArrowRight':
+            boardChanged = slideRight();
+            break;
+        case 'ArrowUp':
+            boardChanged = slideUp();
+            break;
+        case 'ArrowDown':
+            boardChanged = slideDown();
+            break;
+    }
+
+    // Only add a new tile if the board has changed
+    if (boardChanged) {
+        setTile();
+        
+        // Check for game over state after a successful move
+        if (gameOver()) {
+            alert("Game Over! No valid moves left");
+        }
+    }
+
+    // Update the score display
+    document.getElementById("score").innerText = score;
+});
 function removeZeroes(row){
-    row = row.filter(num => num !=0);
-    return row;
+    return row.filter(num => num !=0);
 }
 
 
 function slide(row){
+    if (!row){
+        return null;
+    }
+
+    let originalRow = [...row];
     row = removeZeroes(row);
     // When all zeroes removed, actually side
 
@@ -115,84 +124,107 @@ function slide(row){
         if (row[index] == row[index+1]){
             row[index] *= 2;
             row[index+1] = 0;
-            this.score += row[index];
+            score += row[index];
         }
     }
     row = removeZeroes(row);
-    
     while (row.length < 4){
         row.push(0);
     }
-
-    return row;
+    return originalRow.toString() !== row.toString() ? row: null;
 }
 
 function slideLeft(){
-    for (let r = 0; r < this.rows; r++){
+    let boardChanged = false;
+    for (let r = 0; r < rows; r++){
         let row = board[r];
-        row = slide(row);
-        board[r] = row;
+        let newRow = slide(row);
 
-        for (let c= 0; c < this.columns; c++){
+        // If the value is null, then the board has not changed. 
+        if (newRow){
+          board[r] = newRow;
+          boardChanged = true; 
+        }   
+
+        for (let c= 0; c < columns; c++){
             let tile = document.getElementById(r.toString()+c.toString());
             let num = board[r][c]
             updateTile(tile, num);
         }
     }
+    return boardChanged
     
 }
 
 function slideRight(){
-    for (let r = 0; r < this.rows; r++){
+    let boardChanged = false;
+    for (let r = 0; r < rows; r++){
         let row = board[r];
         // Sliding to the right is like sliding to the left of right
         row.reverse();
-        row = slide(row);
-        row.reverse()
-        board[r] = row;
-
-        for (let c= 0; c < this.columns; c++){
+        let newRow = slide(row);
+        
+        if(newRow){
+            newRow.reverse()
+            board[r] = newRow;
+            boardChanged = true;
+        } else{
+            row.reverse();
+        }
+        for (let c= 0; c < columns; c++){
             let tile = document.getElementById(r.toString()+c.toString());
             let num = board[r][c]
             updateTile(tile, num);
         }
     }
+    return boardChanged;
     
 }
 
 function slideUp(){
+    let boardChanged = false;
     // Sliding left but taking the ith index, 
-    for (let c=0; c < this.columns; c++){
+    for (let c=0; c < columns; c++){
         let row = [board[0][c], board[1][c], board[2][c], board[3][c]];
-        row = slide(row);
-        for (let r=0; r < this.rows; r++){
-            board[r][c] = row[r];
-            let title = document.getElementById(r.toString()+c.toString());
-            let number = board[r][c];
-            updateTile(title, number);
-        }
+        let newRow  = slide(row);
 
+        if (newRow){
+            boardChanged = true;
+            for (let r=0; r < rows; r++){
+                board[r][c] = newRow[r];
+                let title = document.getElementById(r.toString()+c.toString());
+                let number = board[r][c];
+                updateTile(title, number);
+            }
+        }
     }
+    return boardChanged;
 }
 
 function slideDown(){
+    let boardChanged = false;
     // Sliding down is basically sliding up by reverse
-    for (let c=0; c < this.columns; c++){
+    for (let c=0; c < columns; c++){
         let row = [board[0][c], board[1][c], board[2][c], board[3][c]];
         row.reverse()
-        row = slide(row);
-        row.reverse();
-        for (let r=0; r < this.rows; r++){
-            board[r][c] = row[r];
-            let title = document.getElementById(r.toString()+c.toString());
-            let number = board[r][c];
-            updateTile(title, number);
-        }
+        let newRow = slide(row);;
 
+        if(newRow){
+            newRow.reverse();
+            boardChanged = true;
+            for (let r=0; r < rows; r++){
+                board[r][c] = newRow[r];
+                let title = document.getElementById(r.toString()+c.toString());
+                let number = board[r][c];
+                updateTile(title, number);
+            }
+        } else{
+            row.reverse();
+        }
     }
+    return boardChanged;
 }
 function hasEmptyTile() {
-    let count = 0;
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
             if (board[r][c] == 0) { //at least one zero in the board
